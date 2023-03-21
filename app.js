@@ -20,7 +20,7 @@ app.use("/timeline", timelineRoutes);
 
 mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster1-5mpwi.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true})
 .then(() => {
-    app.listen(8080);
+    app.listen(process.env.PORT || 3000);
 })
 .catch((err) => {
     console.log(err);
