@@ -9,10 +9,11 @@ const HttpError = require("../models/http-error");
 
 const getTimeline = async (req, res, next) => {
     const timelineDate = req.params.timelineDate;
+    const userId = req.params.userId;
 
     let timeline;
     try {
-        timeline = await Timeline.findOne({date: timelineDate});
+        timeline = await Timeline.findOne({date: timelineDate, author: userId});
     } catch (err) {
         console.log(err);
         const error = new HttpError(
@@ -53,7 +54,8 @@ const createTimeline = async (req, res, next) => {
 
     const createdTimeline = new Timeline({
         date,
-        timestamps: []
+        timestamps: [],
+        author: userLoggedIn
     });
 
     let user;
@@ -73,13 +75,13 @@ const createTimeline = async (req, res, next) => {
     try {
         const sess = await mongoose.startSession();
         sess.startTransaction();
-        console.log("Timeline: " + createdTimeline);
+        console.log("Timeline: " + createdTimeline.date);
         await createdTimeline.save({ session: sess });
         if(user.timelines == undefined){
             user.timelines = [];
         }
         console.log("Userrrr: " + user);
-        user.timelines.push(createdTimeline);
+        user.timelines.push(createdTimeline.date);
         await user.save({ session: sess });
         await sess.commitTransaction();
     } catch (err) {
