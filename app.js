@@ -6,6 +6,9 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const app = express();
 
+console.log(123);
+console.log(process.env.DB_NAME);
+
 app.use(bodyParser.json()) // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors());
