@@ -23,30 +23,32 @@ const getTimeline = async (req, res, next) => {
         return next(error);
     }
 
-    let timestampsArray = [];
-    for(let i = 0; i < timeline.timestamps.length; i++){
-        try {
-            let timestamp = await Timestamp.findOne({_id: timeline.timestamps[i]._id});
-            timestampsArray.push(timestamp);
-        } catch (err) {
-            console.log(err);
-            const error = new HttpError(
-                'Fetching posts failed, please try again.',
-                500
-            );
-            return next(error);
-        }
-    }
-
-    timestampsArray.sort((a,b) => {
-        return a.time.split(':')[0] - b.time.split(':')[0];
-    });
-
     let timestampsIdArray = [];
 
-    timestampsArray.map(timestampObject => {
-        timestampsIdArray.push(timestampObject._id);
-    })
+    if(timeline) {
+        let timestampsArray = [];
+        for(let i = 0; i < timeline.timestamps.length; i++){
+            try {
+                let timestamp = await Timestamp.findOne({_id: timeline.timestamps[i]._id});
+                timestampsArray.push(timestamp);
+            } catch (err) {
+                console.log(err);
+                const error = new HttpError(
+                    'Fetching posts failed, please try again.',
+                    500
+                );
+                return next(error);
+            }
+        }
+
+        timestampsArray.sort((a,b) => {
+            return a.time.split(':')[0] - b.time.split(':')[0];
+        });
+
+        timestampsArray.map(timestampObject => {
+            timestampsIdArray.push(timestampObject._id);
+        })
+    }
     
     res.json({timeline: timeline, timestamps: timestampsIdArray});
 }
